@@ -11,11 +11,33 @@ const geminiAPI = new GeminiAPI({
   sandbox: true,
 });
 
-geminiAPI
-  .newOrder({ amount: 1, price: 10000, side: 'buy', symbol: 'btcusd' })
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+// geminiAPI
+//   .newOrder({ amount: 1, price: 10000, side: 'buy', symbol: 'btcusd' })
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));
 
-CryptoCompareAPI.coinList()
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+const getMovingAverage = async (cryptoAsset, fiatCurrency, hours, callback) => {
+  if (hours > 169) {
+    console.error('Only up to 169 hours allowed!');
+    return;
+  }
+
+  try {
+    const res = await CryptoCompareAPI.histoHour(cryptoAsset, fiatCurrency);
+    let data = res.reverse();
+    let sum = 0;
+
+    for (let i = 0; i < hours; i++) {
+      sum += data[i].close;
+    }
+
+    let movingAverage = sum / hours;
+    callback(movingAverage);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+getMovingAverage('BTC', 'USD', 100, (res) => {
+  console.log('MA: ', res);
+});

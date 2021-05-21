@@ -1,7 +1,13 @@
-const CryptoCompareAPI = require('cryptocompare');
-global.fetch = require('node-fetch');
+import CryptoCompareAPI from 'cryptocompare';
 
-const getMovingAverage = async (cryptoAsset, fiatCurrency, hours, callback) => {
+CryptoCompareAPI.setApiKey(process.env.CRYPTOCOMPARE_KEY);
+
+export const getMovingAverage = async (
+  cryptoAsset,
+  fiatCurrency,
+  hours,
+  callback,
+) => {
   if (hours > 169) {
     console.error('Only up to 169 hours allowed!');
     return;
